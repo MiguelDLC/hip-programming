@@ -93,12 +93,16 @@ int main(int argc, char * argv[]) {
   //Memcopy, P2P enabled
   if (peerAccess01 && peerAccess10)
     copyP2P(1, gpu0, gpu1, dA_0, dA_1, size);
+  printf("done peer access\n");
 
   //Memcopy, P2P disabled
   copyP2P(0, gpu0, gpu1, dA_0, dA_1, size);
+  printf("done no peer access\n");
 
   //Free device allocations
   //#error Free device alloations dA_0 and dA_1
   HIP_ERRCHK(hipFree(dA_0));
   HIP_ERRCHK(hipFree(dA_1));
+  printf("done all\n");
+  exit(0);
 }
