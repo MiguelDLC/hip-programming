@@ -106,5 +106,7 @@ int main(int argc, char * argv[]) {
   copyP2P(0, gpu0, gpu1, dA_0, dA_1, size);
 
   //Free device allocations
-  #error Free device alloations dA_0 and dA_1
+  //#error Free device alloations dA_0 and dA_1
+  HIP_ERRCHK(hipFree(dA_0));
+  HIP_ERRCHK(hipFree(dA_1));
 }
