@@ -39,15 +39,28 @@ int main(int argc, char *argv[])
     hipStream_t strm[2];
     Decomp dec[2];
 
-    #error Check that we have two HIP devices available     
+    //#error Check that we have two HIP devices available
+    //Check device count
+    int devCount;
+    //#error Get device count
+    hipGetDeviceCount( &devCount);
+    if (devCount < 2) {
+        printf("Need at least two GPUs!\n");
+        exit(EXIT_FAILURE);
+    } else {
+        printf("Found %d GPU devices, using GPUs 0 and 1!\n\n", devCount);
+    }
+
 
     // Create timing events
     HIP_ERRCHK( hipSetDevice(0) );
     HIP_ERRCHK( hipEventCreate(&start) );
     HIP_ERRCHK( hipEventCreate(&stop) );
 
-    #error Allocate pinned host memory for hA, hB, and hC (sizeof(double) * N)
-    
+    //#error Allocate pinned host memory for hA, hB, and hC (sizeof(double) * N)
+    HIP_ERRCHK(hipHostMalloc(&hA, sizeof(double) * N, 0));
+    HIP_ERRCHK(hipHostMalloc(&hB, sizeof(double) * N, 0));
+    HIP_ERRCHK(hipHostMalloc(&hC, sizeof(double) * N, 0));
     
     // Here we initialize the host memory values    
     for(int i = 0; i < N; ++i) {
@@ -63,7 +76,12 @@ int main(int argc, char *argv[])
 
     /* Allocate memory for the devices and per device streams */
     for (int i = 0; i < 2; ++i) {
-        #error Allocate device memory for dA, dB, dC, (sizeof(double) * dec[i].len) and create streams for each device
+        //#error Allocate device memory for dA, dB, dC, (sizeof(double) * dec[i].len) and create streams for each device
+        hipSetDevice(i);
+        HIP_ERRCHK(hipMalloc( &dA[i], sizeof(double) * dec[i].len));
+        HIP_ERRCHK(hipMalloc( &dB[i], sizeof(double) * dec[i].len));
+        HIP_ERRCHK(hipMalloc( &dC[i], sizeof(double) * dec[i].len));
+        HIP_ERRCHK( hipStreamCreate(&(strm[i])) );
     }
 
     /* Start timer */
@@ -76,21 +94,41 @@ int main(int argc, char *argv[])
        because the memory copies block the host process execution. */
     for (int i = 0; i < 2; ++i) {
         // Start by selecting the active device!
-        #error Add here the memcpy-kernel-memcpy parts
+        //#error Add here the memcpy-kernel-memcpy parts
+        HIP_ERRCHK(hipSetDevice(i));
+        HIP_ERRCHK(hipMemcpyAsync(dA[i], hA + dec[i].start, dec[i].len*sizeof(double),  hipMemcpyHostToDevice, strm[i]));
+        HIP_ERRCHK(hipMemcpyAsync(dB[i], hB + dec[i].start, dec[i].len*sizeof(double),  hipMemcpyHostToDevice, strm[i]));
+
+        dim3 grid, threads;
+        grid.x = (dec[i].len + ThreadsInBlock - 1) / ThreadsInBlock;
+        threads.x = ThreadsInBlock;
+
+        hipLaunchKernelGGL(vector_add, grid, threads, 0, strm[i], dC[i], dA[i], dB[i], dec[i].len);
+        HIP_ERRCHK(hipMemcpyAsync(dC[i], hC + dec[i].start, dec[i].len*sizeof(double),  hipMemcpyDeviceToHost, strm[i]));
     }
 
     //// Add here the stream synchronization calls. After both
     // streams have finished, we know that we stop the timing.
     for (int i = 0; i < 2; ++i) {
-        #error Add here the synchronization calls and destroy streams
+        //#error Add here the synchronization calls and destroy streams
+        HIP_ERRCHK( hipSetDevice(i) );
+        HIP_ERRCHK( hipStreamSynchronize(strm[i]) );
+        HIP_ERRCHK( hipStreamDestroy(strm[i]) );
     }
 
     // Add here the timing event stop calls
-    #error Add here timing calls
+    //#error Add here timing calls
+    HIP_ERRCHK( hipSetDevice(0) );
+    HIP_ERRCHK( hipEventRecord(stop) );
 
     /* Free device memories */
     for (int i = 0; i < 2; ++i) {
-        #error Add here HIP deallocations
+        //#error Add here HIP deallocations
+        HIP_ERRCHK( hipSetDevice(i) );
+        HIP_ERRCHK( hipFree((void*)dA[i]) );
+        HIP_ERRCHK( hipFree((void*)dB[i]) );
+        HIP_ERRCHK( hipFree((void*)dC[i]) );
+
     }
 
     int errorsum = 0;
