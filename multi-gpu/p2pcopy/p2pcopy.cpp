@@ -18,9 +18,9 @@ void copyP2P(int p2p, int gpu0, int gpu1, int * dA_0, int * dA_1, int size) {
   //Enable peer access for GPUs
   if (p2p) {
     //#error Enable peer access for GPU 0 and GPU 1
-    hipSetDevice(gpu0);
+    HIP_ERRCHK(hipSetDevice(gpu0));
     HIP_ERRCHK(hipDeviceEnablePeerAccess(gpu1, 0));
-    hipSetDevice(gpu1);
+    HIP_ERRCHK(hipSetDevice(gpu1));
     HIP_ERRCHK(hipDeviceEnablePeerAccess(gpu0, 0));
   }
 
@@ -32,7 +32,7 @@ void copyP2P(int p2p, int gpu0, int gpu1, int * dA_0, int * dA_1, int size) {
   clock_t tStart = clock();
   for (int i = 0; i < copies; ++i) {
     //#error Copy dA_1 on device 1 to dA_0 on device 0, "copies"
-    times to get timings
+    //times to get timings
     HIP_ERRCHK(hipMemcpy(dA_0, dA_1, size, hipMemcpyDefault));
   }
   //#error Sync stream 0
