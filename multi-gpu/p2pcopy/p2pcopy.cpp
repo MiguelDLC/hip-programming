@@ -61,7 +61,7 @@ int main(int argc, char * argv[]) {
   //Check device count
   int devCount;
   //#error Get device count
-  hipGetDeviceCount( & devcount);
+  hipGetDeviceCount( &devCount);
   if (devCount < 2) {
     printf("Need at least two GPUs!\n");
     exit(EXIT_FAILURE);
@@ -83,8 +83,8 @@ int main(int argc, char * argv[]) {
   //Check peer accessibility between GPUs 0 and 1
   int peerAccess01;
   int peerAccess10;
-  HIP_ERRCHK(hipDeviceCanAccessPeer(peerAccess01, 0, 1));
-  HIP_ERRCHK(hipDeviceCanAccessPeer(peerAccess10, 1, 0));
+  HIP_ERRCHK(hipDeviceCanAccessPeer(&peerAccess01, 0, 1));
+  HIP_ERRCHK(hipDeviceCanAccessPeer(&peerAccess10, 1, 0));
 
   printf("hipDeviceCanAccessPeer: %d (GPU %d to GPU %d)\n", peerAccess01, gpu0, gpu1);
   printf("hipDeviceCanAccessPeer: %d (GPU %d to GPU %d)\n", peerAccess10, gpu1, gpu0);
