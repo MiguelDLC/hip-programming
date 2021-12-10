@@ -103,7 +103,8 @@ int main(int argc, char *argv[])
         grid.x = (dec[i].len + ThreadsInBlock - 1) / ThreadsInBlock;
         threads.x = ThreadsInBlock;
 
-        hipLaunchKernelGGL(vector_add, grid, threads, 0, strm[i], dC[i], dA[i], dB[i], dec[i].len);
+        //hipLaunchKernelGGL(vector_add, grid, threads, 0, strm[i], dC[i], dA[i], dB[i], dec[i].len);
+        vector_add<<<grid, threads, 0, strm[i]>>>(dC[i], dA[i], dB[i], dec[i].len);
         HIP_ERRCHK(hipMemcpyAsync(hC + dec[i].start, dC[i], dec[i].len*sizeof(double),  hipMemcpyDeviceToHost, strm[i]));
     }
 
