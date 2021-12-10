@@ -83,18 +83,10 @@ int main(int argc, char * argv[]) {
   //Check peer accessibility between GPUs 0 and 1
   int peerAccess01;
   int peerAccess10;
-  HIP_ERRCHK(hipDeviceCanAccessPeer(&peerAccess01, 0, 1));
-  HIP_ERRCHK(hipDeviceCanAccessPeer(&peerAccess10, 1, 0));
-
-  printf("hipDeviceCanAccessPeer: %d (GPU %d to GPU %d)\n", peerAccess01, gpu0, gpu1);
-  printf("hipDeviceCanAccessPeer: %d (GPU %d to GPU %d)\n", peerAccess10, gpu1, gpu0);
 
   //#error Check peer to peer accessibility from device 0 to 1 and 1 to 0
-  hipSetDevice(0);
-  HIP_ERRCHK(hipDeviceEnablePeerAccess(1, 0));
-  hipSetDevice(1);
-  HIP_ERRCHK(hipDeviceEnablePeerAccess(0, 0));
-
+  HIP_ERRCHK(hipDeviceCanAccessPeer(&peerAccess01, 0, 1));
+  HIP_ERRCHK(hipDeviceCanAccessPeer(&peerAccess10, 1, 0));
   printf("hipDeviceCanAccessPeer: %d (GPU %d to GPU %d)\n", peerAccess01, gpu0, gpu1);
   printf("hipDeviceCanAccessPeer: %d (GPU %d to GPU %d)\n", peerAccess10, gpu1, gpu0);
 
