@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
         double errorsum = 0;
         for (int i = 0; i < N; ++i)
             errorsum += hA[i] - 2.0;        
-        printf("CPU-CPU time %f, errorsum %f\n", CPUtime, errorsum);
+        printf("CPU-CPU time %fms, errorsum %f\n", CPUtime*1000, errorsum);
     }
 
     /* Re-initialize and copy the data to the device memory */
@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
         double errorsum = 0;
         for (int i = 0; i < N; ++i)
             errorsum += hA[i] - 2.0;        
-        printf("GPU-GPU hip-aware time %f, errorsum %f\n", GPUtime, errorsum);
+        printf("GPU-GPU hip-aware time %fms, errorsum %f\n", GPUtime*1000, errorsum);
     }
 
     /* Re-initialize and copy the data to the device memory to prepare for
@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
         for (int i = 0; i < N; ++i)
             errorsum += hA[i] - 2.0;
         
-        printf("GPU-GPU manual time %f, errorsum %f\n", GPUtime, errorsum);
+        printf("GPU-GPU manual time %fms, errorsum %f\n", GPUtime*1000, errorsum);
     }
 
     //#error Free pinned host and device memory for hA and dA
