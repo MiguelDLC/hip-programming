@@ -50,7 +50,6 @@ void copyP2P(int p2p, int gpu0, int gpu1, int * dA_0, int * dA_1, int size) {
     HIP_ERRCHK(hipDeviceDisablePeerAccess(gpu1));
     HIP_ERRCHK(hipSetDevice(gpu1));
     HIP_ERRCHK(hipDeviceDisablePeerAccess(gpu0));
-    for GPU 0 and GPU 1
     printf("P2P enabled - Bandwith: %.3f (GB/s), Time: %.3f s\n", bandwidth, time_s);
   } else {
     printf("P2P disabled - Bandwith: %.3f (GB/s), Time: %.3f s\n", bandwidth, time_s);
