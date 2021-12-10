@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
         threads.x = ThreadsInBlock;
 
         hipLaunchKernelGGL(vector_add, grid, threads, 0, strm[i], dC[i], dA[i], dB[i], dec[i].len);
-        HIP_ERRCHK(hipMemcpyAsync(dC[i], hC + dec[i].start, dec[i].len*sizeof(double),  hipMemcpyDeviceToHost, strm[i]));
+        HIP_ERRCHK(hipMemcpyAsync(hC + dec[i].start, dC[i], dec[i].len*sizeof(double),  hipMemcpyDeviceToHost, strm[i]));
     }
 
     //// Add here the stream synchronization calls. After both
