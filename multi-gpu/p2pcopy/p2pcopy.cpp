@@ -9,7 +9,7 @@ static inline void hip_errchk(hipError_t err,
   const char * file, int line) {
   if (err != hipSuccess) {
     printf("\n\n%s in %s at line %d\n", hipGetErrorString(err), file, line);
-    exit(EXIT_FAILURE);
+    //exit(EXIT_FAILURE);
   }
 }
 
